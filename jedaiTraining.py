@@ -3,75 +3,144 @@ import time
 
 #iniciando pygame
 pygame.init()
+
 #criando tela, setando legenda, carregando icone e colocando na tela
 screen = pygame.display.set_mode((800, 600))
+background = pygame.image.load("rect10.png")
 pygame.display.set_caption("JedaiTraining")
 icon = pygame.image.load('g851.png')
 pygame.display.set_icon(icon)
 
 
-playerImg1 = pygame.image.load('g852.png')
-playerImg2 = pygame.image.load('g853.png')
-playerImg3 = pygame.image.load('covid.png')
+
+class P_cariribot:
+    def __init__(self):
+        self.p_X = None
+        self.p_Y = None
+        self.playerImg = None
+        self.at = 0
+
+    def setImg(self,s):
+        self.playerImg = pygame.image.load(s)
+
+    def setX(x):
+        self.p_X = x
+    def setX(y):
+        self.p_Y = y
+            
+
+    def setDisplay(self):
+        screen.blit(self.playerImg, (self.p_X,self.p_Y))
+
+    def moviment(self):
+        if(self.at):
+            self.at = 0
+        else:
+            self.at = 1
+
+class P_covid:
+    def __init__(self):
+        self.p_X = 490
+        self.p_Y = 460
+        self.playerImg = None
+        self.angle = 0
+
+    def setImg(self,s):
+        self.playerImg = pygame.image.load(s)
 
 
+    def setDisplay(self):
+        screen.blit(self.playerImg, (self.p_X,self.p_Y))
 
-
-playerX = 10
-playerY = 460
-
-playerBadX = 490
-playerBadY = 460
-
-background = pygame.image.load("rect10.png")
-
-
-
-def rot_center(image, angle):
-    """rotate an image while keeping its center and size"""
-    orig_rect = image.get_rect()
-    rot_image = pygame.transform.rotate(image, angle)
-    rot_rect = orig_rect.copy()
-    rot_rect.center = rot_image.get_rect().center
-    rot_image = rot_image.subsurface(rot_rect).copy()
-    return rot_image
-
-
-
-def playerBad():
-    screen.blit(playerImg3, (playerBadX,playerBadX))
-
-
-def pulo():
-
-
-def tiro():
-
+    def rotat(self):
+        rotated_image = pygame.transform.rotate(self.playerImg,self.angle)
+        screen.blit(rotated_image,(self.p_X,self.p_Y))
+        self.p_X -=1
+        self.angle= self.angle+1
         
-running = True
+    def resetPos(self):
+        self.p_X = 490
+        self.p_Y = 465
+
+class proteCovid:
+    def __init__(self):
+        self.p_X = None
+        self.p_Y = None
+        self.velocity = None
+        self.obejectImg = None
+        
+    def setImg(self,s):
+        self.obejectImg = pygame.image.load(s)
+
+    def setDisplay(self):
+        screen.blit(self.obejectImg, (self.p_X,self.p_Y))
+
+    def resetPos(self):
+        self.p_X = 10
+        self.p_Y = 460
+        
+#playerImg1 = pygame.image.load('g852.png')
+#playerImg2 = pygame.image.load('g853.png')
+#playerImg3 = pygame.image.load('covid.png')
+
+
+
+condicao = True
 at = 0
-angle = 0
-playerBad()
-while running:
+
+caririBot =  P_cariribot()
+caririBot.p_X = 10
+caririBot.p_Y = 460
+caririBot.setImg('g852.png')
+
+covid19 = P_covid()
+covid19.p_X = 490
+covid19.p_Y = 465
+covid19.setImg('covid3d.png')
+
+alcool = proteCovid()
+alcool.p_X = 10
+alcool.p_Y = 460
+alcool.setImg('gel2.png')
+alcool.setDisplay()
+
+while condicao:
     
     screen.fill((255,255,255))
     screen.blit(background,(0,0))
     for event in  pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    
-    if(at==0):
-        screen.blit(playerImg2, (playerX,playerY))
-        at = 1
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                alcool.velocity = 0
+    if(caririBot.at==0):
+        caririBot.setImg('g853.png')
+        caririBot.moviment()
     else:
-        screen.blit(playerImg1, (playerX,playerY))
-        at = 0
+        caririBot.setImg('g852.png')
+        caririBot.moviment()
 
-    rotated_image = pygame.transform.rotate(playerImg3,angle)
-    screen.blit(rotated_image,(playerBadX,playerBadY))
-    angle= angle+1
-    
+    if(alcool.velocity==0):
+        
+        if(alcool.p_Y >= covid19.p_Y and alcool.p_Y <= covid19.p_Y+55 and alcool.p_X >= covid19.p_X and alcool.p_X <= covid19.p_X+55):
+            alcool.velocity = None
+            alcool.resetPos()
+            covid19.resetPos()
+        elif(alcool.p_Y+58 >= covid19.p_Y and alcool.p_Y+58 <= covid19.p_Y+55 and alcool.p_X+91 >= covid19.p_X and alcool.p_X+91 <= covid19.p_X+55): 
+            alcool.velocity = None
+            alcool.resetPos()
+            covid19.resetPos()
+        else:
+            alcool.setDisplay()
+            alcool.p_X +=2
+            
+    caririBot.setDisplay()
+    covid19.setDisplay()
+    covid19.rotat()
+
     pygame.display.update()
     
     
     
+
