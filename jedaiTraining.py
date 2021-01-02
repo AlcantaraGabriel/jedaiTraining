@@ -1,5 +1,6 @@
 import pygame
 import time
+import serialDados
 from playsound import playsound
 
 #iniciando pygame
